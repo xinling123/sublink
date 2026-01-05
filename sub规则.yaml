@@ -189,6 +189,10 @@ rules:
 # 自定义代理
   - DOMAIN-SUFFIX,qichiyu.com,🚀 默认代理
   - DOMAIN,sub.ag.cn.eu.org,🚀 默认代理
+
+# 香港问题节点
+  - DOMAIN-SUFFIX,slack.com,🤖 ChatGPT
+  - DOMAIN-SUFFIX,pypi.org,🤖 ChatGPT
 # 自定义直连
   - DOMAIN-SUFFIX,xinling.site,🎯 直连
 
