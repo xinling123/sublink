@@ -104,6 +104,7 @@ proxy-groups:
 
   - name: 🤖 ChatGPT
     type: select
+    include-all: true
     proxies:
       - 🖐️ 手动选择
       - 🔗 链式代理 
