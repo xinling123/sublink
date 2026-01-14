@@ -120,8 +120,8 @@ proxy-groups:
   - name: 🔗 链式代理
     type: relay
     proxies:
-      - 🛡️ 前置选择  # 第一跳
-      - 🏁 落地选择  # 第二跳
+      - 🏁 落地选择
+    dialer-proxy: 🛡️ 前置选择
 
   - name: 🐟 漏网之鱼
     type: select
