@@ -93,10 +93,14 @@ proxy-groups:
   - name: 🛡️ 前置选择
     type: select
     include-all: true
+    proxies:
+      - DIRECT
 
   - name: 🏁 落地选择
     type: select
     include-all: true
+    proxies:
+      - DIRECT
 
   - name: 🤖 ChatGPT
     type: select
@@ -116,8 +120,8 @@ proxy-groups:
   - name: 🔗 链式代理
     type: relay
     proxies:
-      - 🛡️ 前置筛选  # 第一跳
-      - 🏁 落地筛选  # 第二跳
+      - 🛡️ 前置选择  # 第一跳
+      - 🏁 落地选择  # 第二跳
 
   - name: 🐟 漏网之鱼
     type: select
