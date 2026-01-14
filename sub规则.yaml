@@ -119,7 +119,7 @@ proxy-groups:
       - DIRECT
 
   - name: 🔗 链式代理
-    type: relay
+    type: select
     proxies:
       - 🏁 落地选择
     dialer-proxy: 🛡️ 前置选择
