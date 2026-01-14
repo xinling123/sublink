@@ -76,186 +76,244 @@ dns:
 # 如果相应分组没有筛选到对应的国家，请根据自己节点名字调整筛选关键字。
 # 没有再使用锚点，是考虑很多新手修改难度，这样新手修改某个分组更容易些。
 proxy-groups:
-  - name: 🔀 故障转移
+  - name: ♻️ 自动选择
     type: fallback
     url: "http://www.gstatic.com/generate_204"
     interval: 180
     tolerance: 50
     lazy: true
     include-all: true
-  - name: ♻️ 自动选择
+
+  - name: 🖐️ 手动选择
     type: select
     include-all: true
     proxies:
-      - 🔀 故障转移
+      - ♻️ 自动选择
+
+  - name: 🛡️ 前置选择
+    type: select
+    include-all: true
+
+  - name: 🏁 落地选择
+    type: select
+    include-all: true
+
+  - name: 🤖 ChatGPT
+    type: select
+    proxies:
+      - 🖐️ 手动选择
+      - 🔗 链式代理 
+      - DIRECT
+
+  - name: 🍀 Google
+    type: select
+    include-all: true
+    proxies:
+      - 🖐️ 手动选择
+      - 🔗 链式代理
+      - DIRECT
+
+  - name: 🔗 链式代理
+    type: relay
+    proxies:
+      - 🛡️ 前置筛选  # 第一跳
+      - 🏁 落地筛选  # 第二跳
+
   - name: 🐟 漏网之鱼
     type: select
     include-all: true
     proxies:
       - DIRECT
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
+
   - name: 🚀 默认代理
     type: select
     include-all: true
     proxies:
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
       - DIRECT
+
   - name: 🎮 Steam
     type: select
     include-all: true
     proxies:
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
       - DIRECT
+
   - name: 📹 YouTube
     type: select
     include-all: true
     proxies:
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
       - DIRECT
-  - name: 🍀 Google
-    type: select
-    include-all: true
-    proxies:
-      - ♻️ 自动选择
-      - DIRECT
-  - name: 🤖 ChatGPT
-    type: select
-    include-all: true
-    proxies:
-      - ♻️ 自动选择
-      - DIRECT
+
   - name: 👨🏿‍💻 GitHub
     type: select
     include-all: true
     proxies:
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
       - DIRECT
+
   - name: 🐬 OneDrive
     type: select
     include-all: true
     proxies:
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
       - DIRECT
+
   - name: 🪟 Microsoft
     type: select
     include-all: true
     proxies:
       - DIRECT
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
+
   - name: 🎵 TikTok
     type: select
     include-all: true
     proxies:
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
       - DIRECT
+
   - name: 📲 Telegram
     type: select
     include-all: true
     proxies:
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
       - DIRECT
+
   - name: 🎥 NETFLIX
     type: select
     include-all: true
     proxies:
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
       - DIRECT
+
   - name: ✈️ Speedtest
     type: select
     include-all: true
     proxies:
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
       - DIRECT
-  - name: 💶 PayPal
+
+  - name: 💶 加密交易
     type: select
     include-all: true
     proxies:
+      - 🖐️ 手动选择
       - DIRECT
-      - ♻️ 自动选择
+      
   - name: 🎯 直连
     type: select
     include-all: true
     proxies:
       - DIRECT
-      - ♻️ 自动选择
+      - 🖐️ 手动选择
+
+  - name: 🚫 广告拦截
+    type: select
+    include-all: true
+    proxies:
+      - REJECT
 
 
-# 规则匹配
 rules:
 # DOMAIN-SUFFIX  ​  DOMAIN-SUFFIX,google.com   以指定字符串结尾的域名
 # DOMAIN​           DOMAIN,google.com          完全相等的域名
 # DOMAIN-KEYWORD  ​ DOMAIN-KEYWORD,google      包含指定关键字的域名
 
-# 自定义代理
-  - DOMAIN-SUFFIX,qichiyu.com,🚀 默认代理
-  - DOMAIN,sub.ag.cn.eu.org,🚀 默认代理
 
-# 香港无法代理节点
-  - DOMAIN-SUFFIX,slack.com,🤖 ChatGPT
-  - DOMAIN-SUFFIX,pypi.org,🤖 ChatGPT
-# 自定义直连
-  - DOMAIN-SUFFIX,xinling.site,🎯 直连
-
-# 通用规则
-  - RULE-SET,GameDownload,🎮 Steam
-  # - GEOSITE,category-games@cn,🎯 直连
-  # - GEOSITE,category-games,🎮 Steam
+  # 1. 基础过滤与本地拦截
+  - RULE-SET,ADBlock,🚫 广告拦截
   - RULE-SET,private_ip,🎯 直连,no-resolve
   - RULE-SET,private_domain,🎯 直连
-  # - DOMAIN-SUFFIX,qichiyu.com,🚀 默认代理
-  - RULE-SET,proxylite,🚀 默认代理
+
+  - RULE-SET,apple_domain,🎯 直连
+  - RULE-SET,apple_ip,🎯 直连
+  - RULE-SET,SogouInput,🎯 直连
+  - RULE-SET,StaticResources,🎯 直连
+  - RULE-SET,CDNResources,🎯 直连
+
+  # 2. 自定义强制直连 (最优先)
+  - DOMAIN-SUFFIX,xinling.site,🎯 直连
+  
+  # 3. 自定义强制代理 (针对特定域名)
+  - DOMAIN-SUFFIX,qichiyu.com,🚀 默认代理
+  - DOMAIN,sub.ag.cn.eu.org,🚀 默认代理
+  - DOMAIN-SUFFIX,slack.com,🤖 默认代理
+  - DOMAIN-SUFFIX,pypi.org,🤖 默认代理
+
+  # 4. 特定功能/流媒体规则 (细分代理)
   - RULE-SET,ai,🤖 ChatGPT
-  - RULE-SET,speedtest_domain,✈️ Speedtest
   - RULE-SET,github_domain,👨🏿‍💻 GitHub
+  - RULE-SET,telegram_domain,📲 Telegram
+  - RULE-SET,telegram_ip,📲 Telegram
   - RULE-SET,youtube_domain,📹 YouTube
+  - RULE-SET,netflix_domain,🎥 NETFLIX
+  - RULE-SET,netflix_ip,🎥 NETFLIX
+  - RULE-SET,tiktok_domain,🎵 TikTok
   - RULE-SET,google_domain,🍀 Google
+  - RULE-SET,google_ip,🍀 Google
   - RULE-SET,onedrive_domain,🐬 OneDrive
   - RULE-SET,microsoft_domain,🪟 Microsoft
-  - RULE-SET,apple_domain,🎯 直连
-  - RULE-SET,tiktok_domain,🎵 TikTok
-  - RULE-SET,telegram_domain,📲 Telegram
-  - RULE-SET,netflix_domain,🎥 NETFLIX
-  - RULE-SET,paypal_domain,💶 PayPal
-  - RULE-SET,apple_ip,🎯 直连
-  - RULE-SET,google_ip,🍀 Google
-  - RULE-SET,netflix_ip,🎥 NETFLIX
-  - RULE-SET,telegram_ip,📲 Telegram
+  - RULE-SET,Crypto,💶 加密交易
+  - RULE-SET,paypal_domain,💶 加密交易
+  - RULE-SET,speedtest_domain,✈️ Speedtest
+  - RULE-SET,GameDownload,🎮 Steam
+
+  # 5. 通用代理规则 (针对非中国流量)
+  - RULE-SET,proxylite,🚀 默认代理
   - RULE-SET,geolocation-!cn,🚀 默认代理
+
+  # 6. 国内流量直连
   - RULE-SET,cn_domain,🎯 直连
   - RULE-SET,cn_ip,🎯 直连
+
+  # 7. 兜底规则
   - MATCH,🐟 漏网之鱼
 
-# 规则集
-## type：可选http/file/inline  behavior：可选domain/ipcidr/classical format：可选yaml/text/mrs
+
 rule-anchor:
   ip: &ip {type: http, interval: 604800, behavior: ipcidr, format: mrs}
   domain: &domain {type: http, interval: 604800, behavior: domain, format: mrs}
   class: &class {type: http, interval: 604800, behavior: classical, format: text}
-  class1: &class1 {type: http, interval: 604800, behavior: classical, format: yaml}
+  class-yaml: &class-yaml {type: http, interval: 604800, behavior: classical, format: yaml}
+
 rule-providers:
-    # --- 新增：游戏下载专用规则 ---
-  GameDownload: { <<: *class1, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Game/Game.yaml"}
-  fakeipfilter_domain: {<<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/wwqgtxx/clash-rules/release/fakeip-filter.mrs"}
+  # 广告与基础
+  ADBlock: {<<: *domain, url: "https://adrules.top/adrules-mihomo.mrs"}
   private_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
+  private_ip: {<<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
+
+  # 资源与输入法
+  SogouInput: {<<: *class, url: "https://ruleset.skk.moe/Clash/non_ip/sogouinput.txt"}
+  StaticResources: {<<: *class, url: "https://ruleset.skk.moe/Clash/domainset/cdn.txt"}
+  CDNResources: {<<: *class, url: "https://ruleset.skk.moe/Clash/non_ip/cdn.txt"}
+
+  # 代理规则集
   proxylite: { <<: *class, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/proxy.list"}
   ai: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs" }
+  Crypto: {<<: *class, url: "https://gcore.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/Crypto.list"}
+  GameDownload: { <<: *class-yaml, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Game/Game.yaml"}
+  
+  # 分类规则
   youtube_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
   google_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
+  google_ip: { <<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
   github_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
   telegram_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"}
+  telegram_ip: { <<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
   netflix_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
+  netflix_ip: { <<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
+  tiktok_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
   paypal_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/paypal.mrs"}
   onedrive_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs"}
   microsoft_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"}
   apple_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs"}
+  apple_ip: {<<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo-lite/geoip/apple.mrs"}
   speedtest_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/ookla-speedtest.mrs"}
-  tiktok_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
+
+  # 全局 Geo 规则
   geolocation-!cn: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs"}
   cn_domain: { <<: *domain, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
-  
-  private_ip: {<<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
   cn_ip: { <<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"}
-  google_ip: { <<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
-  telegram_ip: { <<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
-  netflix_ip: { <<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
-  apple_ip: {<<: *ip, url: "https://hubproxy.xinling.site/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo-lite/geoip/apple.mrs"}
